@@ -77,6 +77,17 @@ export class WebhookController {
         return;
       }
 
+      // Verificar se é agradecimento e responder diretamente
+      if (PromptsService.isGratitudeMessage(userMessage)) {
+        const courtesyResponse = PromptsService.getRandomCourtesyResponse();
+        await whatsappService.sendTextMessage({
+          to: chatId,
+          body: courtesyResponse,
+          typing_time: 800
+        });
+        return;
+      }
+
       // Analisar intenção do usuário e escolher prompt apropriado
       const systemPrompt = PromptsService.analyzeUserIntent(userMessage);
 
@@ -140,6 +151,7 @@ Oi! Eu sou seu assistente especialista em drinks e coquetéis!
 • /help - Esta mensagem de ajuda
 • /status - Status do bot
 • /stats - Estatísticas
+• /drinkdodia - Drink especial de hoje
 
 Pode conversar comigo naturalmente! Estou aqui para ajudar você a criar drinks incríveis! 🚀`;
 
@@ -189,11 +201,45 @@ Obrigado por usar o Drink Bot! 🍹`;
       return true;
     }
 
+    // Comando drink do dia
+    if (lowerMessage === '/drinkdodia' || lowerMessage === 'drink do dia' || lowerMessage === '/drink') {
+      const drinkOfDay = PromptsService.getDrinkOfTheDay();
+      const greeting = PromptsService.getTimeBasedGreeting();
+      
+      const drinkMessage = `${greeting}
+
+🍹 **DRINK DO DIA: ${drinkOfDay.name}**
+
+${drinkOfDay.description}
+
+**📋 RECEITA:**
+${drinkOfDay.recipe}
+
+**💡 Dica:** Cada dia da semana tem um drink especial! Amanhã será uma nova surpresa! 😉
+
+Quer que eu explique alguma técnica específica ou sugira uma variação?`;
+
+      await whatsappService.sendTextMessage({
+        to: chatId,
+        body: drinkMessage
+      });
+
+      return true;
+    }
+
     // Comando de boas-vindas/início
     if (lowerMessage === '/start' || lowerMessage === 'oi' || lowerMessage === 'olá' || lowerMessage === 'hi') {
-      const welcomeMessage = `🍹 Olá! Bem-vindo ao *Drink Bot*!
+      const greeting = PromptsService.getTimeBasedGreeting();
+      const drinkOfDay = PromptsService.getDrinkOfTheDay();
+      
+      const welcomeMessage = `${greeting}
+
+🍹 Bem-vindo ao *Drink Bot*!
 
 Eu sou seu bartender virtual especialista em drinks e coquetéis! 
+
+🍹 **DRINK DO DIA: ${drinkOfDay.name}**
+${drinkOfDay.description}
 
 🎯 *Pergunte-me qualquer coisa sobre:*
 • Receitas de drinks clássicos
@@ -208,6 +254,7 @@ Eu sou seu bartender virtual especialista em drinks e coquetéis!
 • "Drinks com gin"
 • "Preciso de algo sem álcool"
 • "Drinks para festa de aniversário"
+• "drink do dia" - para ver a receita completa
 
 Digite */help* para ver todos os comandos disponíveis.
 
