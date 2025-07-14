@@ -5,6 +5,11 @@ import { config } from './config/env';
 import { WebhookController } from './controllers/webhook';
 import { whatsappService } from './services/whatsapp';
 import { llmService } from './services/llm';
+import apiRoutes from './routes/api';
+import { AnalyticsService } from './services/analytics';
+import { IntelligentCache } from './services/cache';
+import { DrinkModel } from './models/Drink';
+import { UserModel } from './models/User';
 
 const app = express();
 
@@ -51,6 +56,9 @@ app.post('/webhook', WebhookController.handleWebhook);
 
 // Endpoint para testar envio de mensagem (opcional, para desenvolvimento)
 app.post('/send-test-message', WebhookController.sendTestMessage);
+
+// API REST completa
+app.use('/api', apiRoutes);
 
 // Endpoint para obter estatísticas
 app.get('/stats', async (req, res) => {
@@ -100,6 +108,33 @@ async function startServer(): Promise<void> {
   try {
     console.log('🚀 Iniciando Drink Bot...');
     
+    // Inicializar sistemas avançados
+    console.log('🔧 Inicializando sistemas...');
+    
+    // Inicializar cache inteligente
+    IntelligentCache.initialize({
+      maxSize: 200, // 200MB
+      maxEntries: 15000,
+      defaultTtl: 3600,
+      cleanupInterval: 300000
+    });
+    
+    // Inicializar banco de dados de drinks
+    DrinkModel.initializeDefaultDrinks();
+    console.log('🍹 Base de dados de drinks carregada');
+    
+    // Pré-carregar cache com dados importantes
+    await IntelligentCache.preload();
+    console.log('💾 Cache pré-carregado');
+    
+    // Inicializar analytics
+    AnalyticsService.trackSystemEvent('startup', {
+      timestamp: new Date(),
+      environment: config.nodeEnv,
+      version: '2.0.0'
+    });
+    console.log('📊 Sistema de analytics ativo');
+    
     // Configurar webhook automaticamente (se possível)
     try {
       if (config.whapi.webhookUrl) {
@@ -130,6 +165,8 @@ async function startServer(): Promise<void> {
       console.log(`   GET  /health  - Status do sistema`);
       console.log(`   POST /webhook - Webhook WhatsApp`);
       console.log(`   GET  /stats   - Estatísticas`);
+      console.log(`   GET  /api/*   - API REST completa`);
+      console.log(`   🔧 Admin endpoints disponíveis com X-API-Key`);
       console.log('');
       console.log('🎯 Bot pronto para receber mensagens!');
       console.log('');

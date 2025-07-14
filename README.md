@@ -2,14 +2,49 @@
 
 Bot especialista em drinks e coquetéis que usa LLM (Large Language Model) para fornecer receitas personalizadas, sugestões baseadas em ingredientes e dicas de preparo através do WhatsApp.
 
-## 🚀 Características
+## 🚀 Características Principais
 
-- **🤖 IA Especializada**: Prompts otimizados para receitas de drinks
-- **📱 Integração WhatsApp**: Recebe e envia mensagens automaticamente  
-- **🔄 LLM Flexível**: Compatible com OpenAI SDK mas configurável para qualquer provedor (Novita, etc.)
-- **💬 Conversas Contextuais**: Mantém histórico de conversas
-- **🎯 Prompts Inteligentes**: Analisa intenção do usuário automaticamente
-- **⚡ TypeScript**: Código tipado e confiável
+### 🤖 Sistema de IA Avançado
+- **IA Especializada**: Prompts otimizados para receitas de drinks
+- **LLM Flexível**: Compatible com OpenAI SDK mas configurável para qualquer provedor (Novita, etc.)
+- **Engine de Recomendações**: Sistema de ML para sugestões personalizadas
+- **Análise de Intenção**: Detecção automática do que o usuário deseja
+
+### 📱 Integração WhatsApp Completa
+- **Recebe e envia mensagens**: Integração total via Whapi.Cloud
+- **Conversas Contextuais**: Histórico e memória de conversas
+- **Comandos Especiais**: /help, /status, /drinkdodia, etc.
+- **Sistema de Cortesia**: Respostas automáticas a agradecimentos
+
+### 🍹 Sistema de Drinks Inteligente
+- **Drink do Dia**: Rotação de 7 drinks clássicos baseado na data
+- **Base de Dados Completa**: Receitas com metadados nutricionais
+- **Busca Inteligente**: Pesquisa por ingredientes, complexidade, ocasião
+- **Sistema de Avaliações**: Rating e reviews de usuários
+
+### 👤 Gestão de Usuários Avançada
+- **Perfis Personalizados**: Preferências, histórico e estatísticas
+- **Sistema de Favoritos**: Drinks salvos por usuário
+- **Níveis de Experiência**: Beginner, Intermediate, Advanced, Expert
+- **Análise de Comportamento**: Padrões de uso e engajamento
+
+### 🚀 API REST Completa
+- **30+ Endpoints**: CRUD completo para usuários, drinks e analytics
+- **Documentação Automática**: Endpoints auto-documentados
+- **Autenticação**: Sistema de API keys para endpoints admin
+- **Cache Inteligente**: Sistema de cache com múltiplas camadas
+
+### 📊 Analytics e Dashboard
+- **Métricas em Tempo Real**: Usuários ativos, sessões, performance
+- **Business Intelligence**: KPIs, forecasts, insights automáticos
+- **Dashboard Administrativo**: Interface completa de analytics
+- **Exportação de Dados**: CSV, JSON para análise externa
+
+### ⚡ Performance e Confiabilidade
+- **Cache Inteligente**: Sistema LFU/LRU com invalidação por tags
+- **TypeScript**: Código 100% tipado e confiável
+- **Monitoramento**: Health checks e alertas automáticos
+- **Otimização Automática**: Sistema auto-tune baseado em métricas
 
 ## 📋 Pré-requisitos
 
