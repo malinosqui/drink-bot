@@ -2,15 +2,118 @@ import { DrinkRecipe } from '../types';
 
 export class PromptsService {
   
+  // Drinks do dia - rotaciona baseado na data
+  private static readonly DRINKS_OF_THE_DAY = [
+    {
+      name: 'Caipirinha',
+      description: 'O clássico brasileiro que nunca sai de moda! 🇧🇷',
+      recipe: '• 50ml de cachaça\n• 1/2 limão cortado em pedaços\n• 2 colheres (chá) de açúcar\n• Gelo a gosto\n\nAmasse o limão com açúcar, adicione cachaça e gelo. Misture bem!'
+    },
+    {
+      name: 'Mojito',
+      description: 'Refrescante e aromático, perfeito para qualquer hora! 🌿',
+      recipe: '• 50ml de rum branco\n• 10 folhas de hortelã\n• 1/2 limão\n• 2 colheres (chá) de açúcar\n• Água com gás\n• Gelo\n\nAmasse a hortelã com açúcar, adicione limão, rum, gelo e complete com água com gás!'
+    },
+    {
+      name: 'Negroni',
+      description: 'Sofisticado e equilibrado, para paladares mais refinados! 🍊',
+      recipe: '• 30ml de gin\n• 30ml de vermute rosso\n• 30ml de Campari\n• Casca de laranja\n• Gelo\n\nMisture tudo com gelo, coe e sirva com casca de laranja!'
+    },
+    {
+      name: 'Margarita',
+      description: 'O sabor do México no seu copo! 🇲🇽',
+      recipe: '• 50ml de tequila\n• 25ml de triple sec\n• 25ml de suco de limão\n• Sal para a borda\n• Gelo\n\nPasse sal na borda do copo, misture ingredientes com gelo e sirva!'
+    },
+    {
+      name: 'Old Fashioned',
+      description: 'Clássico atemporal para os amantes de whisky! 🥃',
+      recipe: '• 60ml de bourbon\n• 1 cubo de açúcar\n• 2-3 gotas de angostura\n• Casca de laranja\n• Gelo\n\nAmasse açúcar com angostura, adicione whisky, gelo e casca de laranja!'
+    },
+    {
+      name: 'Cosmopolitan',
+      description: 'Elegante e rosado, perfeito para brindar! 💅',
+      recipe: '• 40ml de vodka\n• 15ml de triple sec\n• 30ml de suco de cranberry\n• 15ml de suco de limão\n• Gelo\n\nMisture tudo com gelo, coe e sirva em taça de martini!'
+    },
+    {
+      name: 'Daiquiri',
+      description: 'Simplicidade perfeita em três ingredientes! 🍋',
+      recipe: '• 60ml de rum branco\n• 30ml de suco de limão\n• 15ml de xarope simples\n• Gelo\n\nMisture tudo com gelo, coe e sirva em taça gelada!'
+    }
+  ];
+
+  // Respostas de cortesia aleatórias
+  private static readonly COURTESY_RESPONSES = [
+    "Fico feliz em ajudar! 🍹 Qualquer dúvida sobre drinks, é só falar!",
+    "Por nada! Adoro compartilhar conhecimento sobre drinks! 🥂",
+    "De nada! Espero que você aproveite muito esse drink! 🍸",
+    "Foi um prazer ajudar! Bom drink! 🍻",
+    "Sempre às ordens para falar de drinks! Saúde! 🥃",
+    "Que bom que pude ajudar! Drinks são minha paixão! 🍷",
+    "Imagina! Agora vai lá fazer esse drink delicioso! 🧊",
+    "Disponha sempre! Adoro trocar experiências sobre coquetelaria! 🍊"
+  ];
+
+  // Detectar agradecimentos
+  private static readonly GRATITUDE_PATTERNS = [
+    'obrigad', 'valeu', 'obrig', 'vlw', 'thanks', 'thank you', 
+    'brigad', 'grato', 'grata', 'muito bom', 'excelente', 
+    'perfeito', 'show', 'top', 'massa', 'demais'
+  ];
+
+  // Obter drink do dia baseado na data
+  static getDrinkOfTheDay(): { name: string; description: string; recipe: string } {
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // 0 = domingo, 1 = segunda, etc.
+    return this.DRINKS_OF_THE_DAY[dayOfWeek];
+  }
+
+  // Verificar se mensagem é agradecimento
+  static isGratitudeMessage(message: string): boolean {
+    const lowerMessage = message.toLowerCase();
+    return this.GRATITUDE_PATTERNS.some(pattern => lowerMessage.includes(pattern));
+  }
+
+  // Obter resposta de cortesia aleatória
+  static getRandomCourtesyResponse(): string {
+    const randomIndex = Math.floor(Math.random() * this.COURTESY_RESPONSES.length);
+    return this.COURTESY_RESPONSES[randomIndex];
+  }
+
+  // Saudação personalizada por horário
+  static getTimeBasedGreeting(): string {
+    const hour = new Date().getHours();
+    
+    if (hour >= 5 && hour < 12) {
+      return "Bom dia! ☀️ Que tal começar o dia pensando no drink perfeito para mais tarde?";
+    } else if (hour >= 12 && hour < 18) {
+      return "Boa tarde! 🌤️ Perfeito para planejar um drink refrescante!";
+    } else if (hour >= 18 && hour < 22) {
+      return "Boa noite! 🌆 Hora perfeita para um drink especial!";
+    } else {
+      return "Opa, tarde da noite! 🌙 Que tal um drink mais suave para relaxar?";
+    }
+  }
+
   // Prompt principal do sistema para o bot de drinks
   static getSystemPrompt(): string {
+    const drinkOfDay = this.getDrinkOfTheDay();
+    const greeting = this.getTimeBasedGreeting();
+    
     return `Você é um bartender expert e assistente especializado em drinks e coquetéis. Sua missão é ajudar pessoas a descobrir, aprender e criar deliciosos drinks.
+
+${greeting}
+
+🍹 DRINK DO DIA: ${drinkOfDay.name}
+${drinkOfDay.description}
+
+${drinkOfDay.recipe}
 
 PERSONALIDADE:
 - Amigável, entusiasmado e conhecedor
 - Use linguagem casual mas informativa
 - Seja criativo nas sugestões
 - Incentive a experimentação
+- Responda a agradecimentos de forma carinhosa
 
 ESPECIALIDADES:
 - Receitas de coquetéis clássicos e modernos
@@ -164,33 +267,85 @@ Seja honesto sobre como ficará o resultado com cada substituição.`;
   static analyzeUserIntent(message: string): string {
     const lowerMessage = message.toLowerCase();
     
+    // Detectar agradecimentos primeiro
+    if (this.isGratitudeMessage(message)) {
+      return this.getRandomCourtesyResponse();
+    }
+    
+    // Detectar solicitação do drink do dia
+    if (lowerMessage.includes('drink do dia') || lowerMessage.includes('qual o drink de hoje') || 
+        lowerMessage.includes('drink de hoje') || lowerMessage.includes('sugestão de hoje')) {
+      const drinkOfDay = this.getDrinkOfTheDay();
+      return `🍹 **DRINK DO DIA: ${drinkOfDay.name}**
+
+${drinkOfDay.description}
+
+**Receita:**
+${drinkOfDay.recipe}
+
+Quer que eu explique alguma técnica específica ou sugira uma variação? 😊`;
+    }
+    
+    // Detectar saudações e comandos de início
+    if (lowerMessage.includes('oi') || lowerMessage.includes('olá') || lowerMessage.includes('hey') || 
+        lowerMessage.includes('/start') || lowerMessage.includes('começar') || lowerMessage.includes('help me')) {
+      const greeting = this.getTimeBasedGreeting();
+      const drinkOfDay = this.getDrinkOfTheDay();
+      return `${greeting}
+
+Sou seu bartender virtual especializado em drinks! 🍹
+
+🍹 **DRINK DO DIA: ${drinkOfDay.name}**
+${drinkOfDay.description}
+
+**Como posso ajudar hoje?**
+• Receitas de drinks clássicos e modernos
+• Sugestões baseadas nos seus ingredientes
+• Drinks sem álcool (mocktails)
+• Técnicas de preparo
+• Harmonização com comidas
+
+Digite "drink do dia" para ver a receita completa ou me fale que tipo de drink você quer! 😊`;
+    }
+    
     // Palavras-chave para diferentes intenções
-    if (lowerMessage.includes('sem álcool') || lowerMessage.includes('mocktail') || lowerMessage.includes('não bebo')) {
+    if (lowerMessage.includes('sem álcool') || lowerMessage.includes('mocktail') || lowerMessage.includes('não bebo') ||
+        lowerMessage.includes('virgem') || lowerMessage.includes('sem bebida')) {
       return this.getMocktailPrompt();
     }
     
-    if (lowerMessage.includes('iniciante') || lowerMessage.includes('começando') || lowerMessage.includes('nunca fiz')) {
+    if (lowerMessage.includes('iniciante') || lowerMessage.includes('começando') || lowerMessage.includes('nunca fiz') ||
+        lowerMessage.includes('sou novo') || lowerMessage.includes('primeira vez')) {
       return this.getBeginnerPrompt();
     }
     
-    if (lowerMessage.includes('tenho ') && (lowerMessage.includes('vodka') || lowerMessage.includes('gin') || lowerMessage.includes('limão'))) {
-      // Tentar extrair ingredientes mencionados
+    // Detecção melhorada de ingredientes
+    if (lowerMessage.includes('tenho ') || lowerMessage.includes('tenho:') || lowerMessage.includes('ingredientes:') ||
+        lowerMessage.includes('disponível') || lowerMessage.includes('o que fazer com')) {
       const ingredients = this.extractIngredients(message);
       if (ingredients.length > 0) {
         return this.getIngredientBasedPrompt(ingredients);
       }
     }
     
-    if (lowerMessage.includes('festa') || lowerMessage.includes('aniversário') || lowerMessage.includes('casamento')) {
-      const occasion = message.match(/(festa|aniversário|casamento|evento|celebração)/i)?.[0] || 'evento especial';
+    if (lowerMessage.includes('festa') || lowerMessage.includes('aniversário') || lowerMessage.includes('casamento') ||
+        lowerMessage.includes('evento') || lowerMessage.includes('celebração') || lowerMessage.includes('comemoração')) {
+      const occasion = message.match(/(festa|aniversário|casamento|evento|celebração|comemoração)/i)?.[0] || 'evento especial';
       return this.getOccasionPrompt(occasion);
     }
     
-    if (lowerMessage.includes('variação') || lowerMessage.includes('versão') || lowerMessage.includes('diferente')) {
+    if (lowerMessage.includes('variação') || lowerMessage.includes('versão') || lowerMessage.includes('diferente') ||
+        lowerMessage.includes('alternativa') || lowerMessage.includes('outro jeito')) {
       const drinkName = this.extractDrinkName(message);
       if (drinkName) {
         return this.getVariationPrompt(drinkName);
       }
+    }
+    
+    // Detectar nomes de drinks específicos
+    const drinkName = this.extractDrinkName(message);
+    if (drinkName) {
+      return `Me conte mais sobre o que você quer saber sobre ${drinkName}! Quer a receita clássica, alguma variação especial, ou dicas de preparo? 🍹`;
     }
     
     // Prompt padrão do sistema
